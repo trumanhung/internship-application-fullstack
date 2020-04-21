@@ -3,6 +3,27 @@ addEventListener('fetch', event => {
 })
 
 
+class TitleHandler {
+  constructor(variant) {
+    this.variant = variant;
+
+    console.log(this.variant);
+  }
+
+  element(element) {
+    if (element.tagName === "title") {
+      element.setInnerContent(`Truth or Dare: ${this.variant == 1 ? "Dare" : "Truth"}!`);
+    } else if (element.tagName === "h1") {
+      element.setInnerContent(`${this.variant == 1 ? "Dare" : "Truth"}!`);
+    } else if (element.tagName === "p") {
+      element.setInnerContent(`${this.variant == 1 ? "Hire this young man now!" : "What do you think about this candidate?"}`);
+    } else {
+      element.setInnerContent(`${this.variant == 1 ? "Fine, I'll keep my own word" : "Tell Truman what do you think about him"}! 😂😂`);
+      element.setAttribute("href", "https://www.linkedin.com/in/trumanhung");
+    }
+  }
+}
+
 /**
  * Getting cookie from the request headers
  * @param {Request} request
@@ -46,20 +67,15 @@ async function handleRequest(request) {
     .then(json => {
       return json.variants;
     })
-    .catch(err => {
-      console.log(`Fetch Error! :( ${err}`)
-
-      return new Response(`Fetch Error! :( ${err}`, {
-        headers: { 'content-type': 'text/plain' },
-      })
-    });
 
 
-  // check if there is persisting variant.
+
+
+  // Check if there is persisting variant.
   let zeroOrOne = getCookie(request, 'variantIndex');
   console.log(`Cookie variantIndex: ${zeroOrOne}`)
 
-  // randomly pick either url1 or url2 for new visitor.
+  // Randomly pick either url1 or url2 for new visitor.
   if (!zeroOrOne) {
     zeroOrOne = Math.floor(Math.random() * 2)
   }
@@ -70,7 +86,13 @@ async function handleRequest(request) {
   // set cookie
   response.headers.set('Set-Cookie', `variantIndex=${zeroOrOne}`);
 
-  return response;
+  // Changing copy/URLs
+  return new HTMLRewriter()
+    .on('title', new TitleHandler(zeroOrOne))
+    .on('h1#title', new TitleHandler(zeroOrOne))
+    .on('p#description', new TitleHandler(zeroOrOne))
+    .on('a#url', new TitleHandler(zeroOrOne))
+    .transform(response)
 
 
 }
