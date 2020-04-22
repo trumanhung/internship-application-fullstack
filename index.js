@@ -18,7 +18,7 @@ class TitleHandler {
     } else if (element.tagName === "p") {
       element.setInnerContent(`${this.variant == 1 ? "Hire this young man now!" : "What do you think about this candidate?"}`);
     } else {
-      element.setInnerContent(`${this.variant == 1 ? "Fine, I'll keep my own word" : "Tell Truman what do you think about him"}! 😂😂`);
+      element.setInnerContent(`${this.variant == 1 ? "Fine, I'll keep my own word" : "Tell Truman what you think about him"}! 😂😂`);
       element.setAttribute("href", "https://www.linkedin.com/in/trumanhung");
     }
   }
